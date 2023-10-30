@@ -21,7 +21,10 @@ namespace rut::cip
 		Node(Node&& other) noexcept = default;
 		Node& operator=(const Node& other) = delete;
 		Node& operator=(Node&& other) noexcept = default;
-		~Node() = default;
+		~Node();
+
+		bool IsRoot() const;
+		bool IsLeaf() const;
 		friend auto operator<=>(const Node& lha, const Node& rha)
 		{
 			if (std::less<T>()(lha.data, rha.data))
@@ -46,6 +49,38 @@ namespace rut::cip
 	inline Node<T>::Node(const T& value)
 		: data{ value }, parent{nullptr}, left{nullptr}, right{nullptr}
 	{
+	}
+
+	template<typename T>
+	inline Node<T>::~Node()
+	{
+		if (!this->IsRoot())
+		{
+			if (this == this->parent->left)
+			{
+				this->parent->left = nullptr;
+			}
+			else
+			{
+				this->parent->right = nullptr;
+			}
+		}
+
+		this->parent = nullptr;
+		this->left = nullptr;
+		this->right = nullptr;
+	}
+
+	template<typename T>
+	inline bool Node<T>::IsRoot() const
+	{
+		return nullptr == this->parent;
+	}
+
+	template<typename T>
+	inline bool Node<T>::IsLeaf() const
+	{
+		return nullptr == this->left && nullptr == this->right;
 	}
 
 	template<typename T>
